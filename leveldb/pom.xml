@@ -134,7 +134,7 @@
 					<assembly>
 						<inclusions>
 							<inclusion>
-								<groupId>org.iq80.leveldb</groupId>
+								<groupId>com.gridline.leveldb</groupId>
 								<artifactId>leveldb-api</artifactId>
 							</inclusion>
 							<inclusion>
