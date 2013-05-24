@@ -7,14 +7,14 @@ package com.gridline.leveldb;
  * {@link StoredMap} entry (de)serializer
  * <p />
  * Project leveldb-api<br />
- * Entry.java created May 24, 2013
+ * EntryBinding.java created May 24, 2013
  * <p />
  * Copyright, all rights reserved 2013 GridLine Amsterdam
  * @author <a href="mailto:job@gridline.nl">Job</a>
  * @version $Revision:$, $Date:$
  * @param <K> object type to (de)serialize
  */
-public interface Entry<K>
+public interface EntryBinding<K>
 {
 	/**
 	 * Serializes {@code object} into a byte array
