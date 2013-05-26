@@ -192,14 +192,14 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	private byte[] byteKey(Object key)
 	{
 		@SuppressWarnings("unchecked")
-		K keyObject = (K) key;
+		final K keyObject = (K) key;
 		return keyBinding.serialize(keyObject);
 	}
 
 	private byte[] byteValue(Object value)
 	{
 		@SuppressWarnings("unchecked")
-		V valueObject = (V) value;
+		final V valueObject = (V) value;
 		return valueBinding.serialize(valueObject);
 	}
 
