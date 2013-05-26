@@ -208,6 +208,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		private byte[] currentKey = null;
 		private boolean performedDelete = false;
 
+		@Override
 		public Entry<byte[], byte[]> next()
 		{
 			Entry<byte[], byte[]> entry = computeNext();
@@ -220,6 +221,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 			return entry;
 		}
 
+		@Override
 		public boolean hasNext()
 		{
 			Entry<byte[], byte[]> entry = computeNext();
