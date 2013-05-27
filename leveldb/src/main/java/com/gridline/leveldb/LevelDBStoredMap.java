@@ -330,7 +330,18 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 			{
 				Entry<byte[], byte[]> rawEntry = rawEntryIterator.next();
 				return new AbstractMap.SimpleEntry<K, V>(keyBinding.dezerialize(rawEntry.getKey()),
-						valueBinding.dezerialize(rawEntry.getValue()));
+						valueBinding.dezerialize(rawEntry.getValue()))
+				{
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public V setValue(V value)
+					{
+						LevelDBStoredMap.this.put(getKey(), value);
+						return super.setValue(value);
+					}
+
+				};
 			}
 
 			@Override
