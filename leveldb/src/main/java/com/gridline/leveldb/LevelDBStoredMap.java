@@ -94,6 +94,17 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	}
 
 	@Override
+	public boolean equals(Object obj)
+	{
+		if (!(obj instanceof Map))
+		{
+			return false;
+		}
+		Map<?, ?> other = (Map<?, ?>) obj;
+		return entrySet().equals(other.entrySet());
+	}
+
+	@Override
 	public V get(Object key)
 	{
 		byte[] rawObject = db.get(byteKey(key));
@@ -105,6 +116,17 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		{
 			return valueBinding.dezerialize(rawObject);
 		}
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		for (Entry<K, V> entry : entrySet())
+		{
+			hash += entry.hashCode();
+		}
+		return hash;
 	}
 
 	@Override
