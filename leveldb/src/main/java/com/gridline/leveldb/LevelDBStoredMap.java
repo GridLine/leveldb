@@ -122,6 +122,11 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public V put(K key, V value)
 	{
+		if (key == null || value == null)
+		{
+			throw new NullPointerException();
+		}
+
 		V oldValue = null;
 
 		if (containsKey(key))
