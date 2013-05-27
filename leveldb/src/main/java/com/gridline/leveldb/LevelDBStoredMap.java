@@ -105,7 +105,15 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public V get(Object key)
 	{
-		return valueBinding.dezerialize(db.get(byteKey(key)));
+		byte[] rawObject = db.get(byteKey(key));
+		if (rawObject == null)
+		{
+			return null;
+		}
+		else
+		{
+			return valueBinding.dezerialize(rawObject);
+		}
 	}
 
 	@Override
