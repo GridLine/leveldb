@@ -158,6 +158,11 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public V remove(Object key)
 	{
+		if (key == null)
+		{
+			throw new NullPointerException();
+		}
+
 		V oldValue = null;
 
 		if (containsKey(key))
