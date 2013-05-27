@@ -107,7 +107,12 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public V get(Object key)
 	{
-		byte[] rawObject = db.get(byteKey(key));
+		return getByteKey(byteKey(key));
+	}
+
+	private V getByteKey(byte[] key)
+	{
+		byte[] rawObject = db.get(key);
 		if (rawObject == null)
 		{
 			return null;
@@ -149,14 +154,10 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 			throw new NullPointerException();
 		}
 
-		V oldValue = null;
+		byte[] byteKey = byteKey(key);
+		V oldValue = getByteKey(byteKey);
+		db.put(byteKey, byteValue(value));
 
-		if (containsKey(key))
-		{
-			oldValue = get(key);
-		}
-
-		db.put(byteKey(key), byteValue(value));
 		return oldValue;
 	}
 
@@ -185,14 +186,9 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 			throw new NullPointerException();
 		}
 
-		V oldValue = null;
-
-		if (containsKey(key))
-		{
-			oldValue = get(key);
-		}
-
-		db.delete(byteKey(key));
+		byte[] byteKey = byteKey(key);
+		V oldValue = getByteKey(byteKey);
+		db.delete(byteKey);
 
 		return oldValue;
 	}
