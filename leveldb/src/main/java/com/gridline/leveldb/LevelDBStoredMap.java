@@ -63,16 +63,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public boolean containsKey(Object key)
 	{
-		try (DBIterator i = db.iterator())
-		{
-			byte[] byteKey = byteKey(key);
-			i.seek(byteKey);
-			return i.hasNext() && Arrays.equals(byteKey, i.peekNext().getKey());
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
+		return db.get(byteKey(key)) != null;
 	}
 
 	@Override
