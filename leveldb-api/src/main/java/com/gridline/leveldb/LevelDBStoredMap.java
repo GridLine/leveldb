@@ -137,7 +137,15 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public boolean isEmpty()
 	{
-		return size() == 0;
+		try (DBIterator i = db.iterator())
+		{
+			i.seekToFirst();
+			return !i.hasNext();
+		}
+		catch (IOException e)
+		{
+		}
+		return true;
 	}
 
 	@Override
