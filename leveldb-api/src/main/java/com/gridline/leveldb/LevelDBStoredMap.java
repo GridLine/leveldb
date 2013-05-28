@@ -30,9 +30,9 @@ import org.iq80.leveldb.WriteBatch;
 public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 {
 
-	private final DB db;
-	private final EntryBinding<K> keyBinding;
-	private final EntryBinding<V> valueBinding;
+	protected final DB db;
+	protected final EntryBinding<K> keyBinding;
+	protected final EntryBinding<V> valueBinding;
 
 	public LevelDBStoredMap(DB db, EntryBinding<K> keyBinding, EntryBinding<V> valueBinding)
 	{
@@ -46,7 +46,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	{
 		try (WriteBatch batch = db.createWriteBatch())
 		{
-			try (DBIterator i = db.iterator())
+			try (DBIterator i = getDBIterator())
 			{
 				for (i.seekToFirst(); i.hasNext(); i.next())
 				{
@@ -70,7 +70,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	public boolean containsValue(Object value)
 	{
 		byte[] byteValue = byteValue(value);
-		try (DBIterator i = db.iterator())
+		try (DBIterator i = getDBIterator())
 		{
 			for (i.seekToFirst(); i.hasNext(); i.next())
 			{
@@ -110,7 +110,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		return getByteKey(byteKey(key));
 	}
 
-	private V getByteKey(byte[] key)
+	protected V getByteKey(byte[] key)
 	{
 		byte[] rawObject = db.get(key);
 		if (rawObject == null)
@@ -137,7 +137,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	@Override
 	public boolean isEmpty()
 	{
-		try (DBIterator i = db.iterator())
+		try (DBIterator i = getDBIterator())
 		{
 			i.seekToFirst();
 			return !i.hasNext();
@@ -205,7 +205,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 	public int size()
 	{
 		int c = 0;
-		try (DBIterator i = db.iterator())
+		try (DBIterator i = getDBIterator())
 		{
 			for (i.seekToFirst(); i.hasNext(); i.next())
 			{
@@ -224,24 +224,29 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		return new ValueCollection();
 	}
 
-	private byte[] byteKey(Object key)
+	protected byte[] byteKey(Object key)
 	{
 		@SuppressWarnings("unchecked")
 		final K keyObject = (K) key;
 		return keyBinding.serialize(keyObject);
 	}
 
-	private byte[] byteValue(Object value)
+	protected byte[] byteValue(Object value)
 	{
 		@SuppressWarnings("unchecked")
 		final V valueObject = (V) value;
 		return valueBinding.serialize(valueObject);
 	}
 
-	private class RawEntryIterator implements Iterator<Entry<byte[], byte[]>>
+	protected DBIterator getDBIterator()
 	{
-		private byte[] currentKey = null;
-		private boolean performedDelete = false;
+		return db.iterator();
+	}
+
+	protected class RawEntryIterator implements Iterator<Entry<byte[], byte[]>>
+	{
+		protected byte[] currentKey = null;
+		protected boolean performedDelete = false;
 
 		@Override
 		public Entry<byte[], byte[]> next()
@@ -265,7 +270,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 
 		protected Entry<byte[], byte[]> computeNext()
 		{
-			try (DBIterator i = db.iterator())
+			try (DBIterator i = getDBIterator())
 			{
 				if (currentKey == null)
 				{
@@ -304,7 +309,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		}
 	}
 
-	private class EntrySet extends AbstractSet<java.util.Map.Entry<K, V>>
+	protected class EntrySet extends AbstractSet<java.util.Map.Entry<K, V>>
 	{
 
 		@Override
@@ -358,7 +363,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 
 	}
 
-	private class KeySet extends AbstractSet<K>
+	protected class KeySet extends AbstractSet<K>
 	{
 
 		@Override
@@ -397,7 +402,7 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		}
 	}
 
-	private class ValueCollection extends AbstractCollection<V>
+	protected class ValueCollection extends AbstractCollection<V>
 	{
 
 		@Override
