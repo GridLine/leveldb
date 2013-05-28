@@ -4,8 +4,8 @@
 package com.gridline.leveldb;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.AbstractCollection;
-import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collection;
@@ -338,25 +338,65 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 			public java.util.Map.Entry<K, V> next()
 			{
 				Entry<byte[], byte[]> rawEntry = rawEntryIterator.next();
-				return new AbstractMap.SimpleEntry<K, V>(keyBinding.deserialize(rawEntry.getKey()),
-						valueBinding.deserialize(rawEntry.getValue()))
-				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public V setValue(V value)
-					{
-						LevelDBStoredMap.this.put(getKey(), value);
-						return super.setValue(value);
-					}
-
-				};
+				return new LevelDBEntry(keyBinding.deserialize(rawEntry.getKey()));
 			}
 
 			@Override
 			public void remove()
 			{
 				rawEntryIterator.remove();
+			}
+
+			private class LevelDBEntry implements Map.Entry<K, V>, Serializable
+			{
+				private static final long serialVersionUID = 1L;
+				private final K key;
+
+				public LevelDBEntry(K key)
+				{
+					this.key = key;
+				}
+
+				@Override
+				public K getKey()
+				{
+					return key;
+				}
+
+				@Override
+				public V setValue(V value)
+				{
+					return LevelDBStoredMap.this.put(key, value);
+				}
+
+				@Override
+				public V getValue()
+				{
+					return LevelDBStoredMap.this.get(key);
+				}
+
+				@Override
+				public int hashCode()
+				{
+					V value = getValue();
+					return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+				}
+
+				@Override
+				public boolean equals(Object o)
+				{
+					if (!(o instanceof Map.Entry))
+					{
+						return false;
+					}
+
+					@SuppressWarnings("rawtypes")
+					Map.Entry other = (Map.Entry) o;
+					V value = getValue();
+
+					return (key == null ? other.getKey() == null : key.equals(other.getKey()))
+							&& (value == null ? other.getValue() == null : value.equals(other.getValue()));
+				}
 			}
 
 		}
