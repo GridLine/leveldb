@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 package com.gridline.leveldb;
 
+import java.io.Closeable;
 import java.util.Map;
 
 import org.iq80.leveldb.DB;
@@ -23,7 +24,7 @@ import org.iq80.leveldb.DB;
  * @param <K>
  * @param <V>
  */
-public interface StoredMap<K, V> extends Map<K, V>
+public interface StoredMap<K, V> extends Map<K, V>, Closeable
 {
 
 }

@@ -60,6 +60,17 @@ public class LevelDBStoredMap<K, V> implements StoredMap<K, V>
 		}
 	}
 
+	/**
+	 * Close the underlying LevelDB database. This should only be called if
+	 * the database will not be closed in another way. After this method
+	 * has been called this Map cannot be used anymore.
+	 */
+	@Override
+	public void close() throws IOException
+	{
+		this.db.close();
+	}
+
 	@Override
 	public boolean containsKey(Object key)
 	{

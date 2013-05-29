@@ -3,6 +3,7 @@
 // ---------------------------------------------------------
 package com.gridline.leveldb;
 
+import java.io.Closeable;
 import java.util.SortedMap;
 
 import org.iq80.leveldb.DB;
@@ -22,7 +23,7 @@ import org.iq80.leveldb.DB;
  * @author <a href="mailto:job@gridline.nl">Job</a>
  * @version $Revision:$, $Date:$
  */
-public interface StoredSortedMap<K, V> extends SortedMap<K, V>
+public interface StoredSortedMap<K, V> extends SortedMap<K, V>, Closeable
 {
 
 }
